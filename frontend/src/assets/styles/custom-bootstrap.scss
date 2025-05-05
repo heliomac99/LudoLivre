@@ -1,0 +1,21 @@
+$primary: #7269ef;
+$body-bg: #f8f9fa;
+// ou para reforçar:
+$primary-contrast: #ffffff;
+
+@import "bootstrap/scss/bootstrap";
+
+.btn-primary {
+  color: #fff !important;
+}
+
+.titulo {
+  color: #6c757d !important; /* cinza médio */
+}
+
+.multiselect-tag {
+  background: #7269ef !important; /* roxo */
+  border-color: #7269ef !important;
+  color: white;
+}
+

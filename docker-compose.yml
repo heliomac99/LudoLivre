@@ -1,0 +1,50 @@
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: LodoLivre
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mysql
+    environment:
+      FLASK_APP: main.py
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_HOST: mysql
+      DB_NAME: LodoLivre
+
+    volumes:
+      - ./backend:/app
+    command: ["./wait-for-it.sh", "mysql:3306", "-t", "30", "--", "flask", "run", "--host=0.0.0.0"]
+
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    command: sh -c "pnpm run dev"
+
+volumes:
+  mysql_data:
