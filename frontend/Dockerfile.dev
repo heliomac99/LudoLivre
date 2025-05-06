@@ -1,0 +1,26 @@
+# Dockerfile.dev - Frontend Vue 3 + Vite + pnpm + Bootstrap
+
+# Etapa base
+FROM node:22.1.0
+
+# Diretório de trabalho
+WORKDIR /app
+
+# Instala pnpm globalmente
+RUN npm install -g pnpm
+
+# Copia arquivos de dependência primeiro
+COPY package.json pnpm-lock.yaml ./
+
+
+# Instala dependências
+RUN pnpm install --no-frozen-lockfile
+
+# Copia o restante do projeto
+COPY . .
+
+# Expõe a porta do Vite (3000 padrão)
+EXPOSE 3000
+
+# Comando padrão
+CMD ["pnpm", "run", "dev"]

@@ -1,0 +1,48 @@
+$primary: #7269ef;
+$body-bg: #f8f9fa;
+// ou para reforçar:
+$primary-contrast: #ffffff;
+
+@import "bootstrap/scss/bootstrap";
+
+.btn-primary {
+  color: #fff !important;
+}
+
+.titulo {
+  color: #6c757d !important; /* cinza médio */
+}
+
+.multiselect-tag {
+  background: #7269ef !important; /* roxo */
+  border-color: #7269ef !important;
+  color: white;
+}
+
+
+/* Scrollbar moderna (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #444 transparent;
+}

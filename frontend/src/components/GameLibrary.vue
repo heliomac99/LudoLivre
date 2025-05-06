@@ -35,7 +35,7 @@
           <p class="lore">{{ jogoSelecionado.descricaoCompleta }}</p>
           <hr class="lore-divider" />
         </div>
-        
+
         <CarrosselImagens :imagens="jogoSelecionado.imagensBase64" />
         <button class="btn btn-secondary mt-3 w-100" @click="fechar">Fechar</button>
       </div>
