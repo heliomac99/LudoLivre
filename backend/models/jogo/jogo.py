@@ -10,6 +10,7 @@ class Jogo(db.Model):
     descricao = db.Column(db.Text, nullable=True)
     descricaoCurta = db.Column(db.String(255), nullable=True)
     descricaoCompleta = db.Column(db.Text, nullable=True)
+    nomeArquivoWallpaper = db.Column(db.String(255), nullable=True)
 
     imagens = relationship(
         'JogoImagem',

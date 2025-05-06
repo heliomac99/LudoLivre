@@ -51,6 +51,10 @@ def create_app():
         from controllers.usuarioController import bp as usuario_bp
         app.register_blueprint(usuario_bp)
 
+        from controllers.jogoController import bp as jogo_bp
+        app.register_blueprint(jogo_bp)
+
+
     return app
 
 

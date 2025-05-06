@@ -26,10 +26,10 @@ services:
       DB_PASSWORD: root
       DB_HOST: mysql
       DB_NAME: LodoLivre
-
     volumes:
       - ./backend:/app
     command: ["./wait-for-it.sh", "mysql:3306", "-t", "30", "--", "flask", "run", "--host=0.0.0.0"]
+
 
 
   frontend:

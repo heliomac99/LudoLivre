@@ -77,8 +77,8 @@ import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 import { useToast } from 'vue-toastification';
 import usuarioService from '../../services/usuarioService';
-import type { LoginModel } from '../../models/usuarioModel';
-import type { RegistroModel } from '../../models/usuarioModel';
+import type { LoginModel } from '../../models/usuario/usuarioModel';
+import type { RegistroModel } from '../../models/usuario/usuarioModel';
 import { useUsuarioStore } from '../../stores/usuario';
 import ButtonLoading from '../../components/ButtonLoading.vue';
 

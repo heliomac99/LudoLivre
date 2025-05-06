@@ -58,7 +58,7 @@ import { defineComponent } from 'vue'
 import ButtonLoading from '@/components/ButtonLoading.vue'
 import usuarioService from '@/services/usuarioService'
 import { useToast } from 'vue-toastification'
-import type { UpdateModel } from '@/models/usuarioModel'
+import type { UpdateModel } from '@/models/usuario/usuarioModel'
 import Multiselect from '@vueform/multiselect'
 import TextoValor from '@/helpers/TextoValor'
 

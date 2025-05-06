@@ -1,21 +1,21 @@
-import MeuPerfil from '@/pages/usuario/MeuPerfil.vue'
+import Biblioteca from '@/pages/jogo/Biblioteca.vue'
 import HomeLayout from '@/pages/Home.vue'
 
 export default [
   {
-    path: '/usuario',
+    path: '/home',
     component: HomeLayout,
     meta: { requiresAuth: true },
     children: [
       {
-        path: 'perfil',
-        name: 'MeuPerfil',
-        component: MeuPerfil,
+        path: 'biblioteca',
+        name: 'Biblioteca',
+        component: Biblioteca,
         meta: {
           requiresAuth: true,
           goesToMenu: true,
-          label: 'Meu Perfil',
-          menuGroup: 'Usuário' // 👈 nome do grupo
+          label: 'Biblioteca',
+          menuGroup: 'Jogos' // 👈 nome do grupo
         }
       }
     ]

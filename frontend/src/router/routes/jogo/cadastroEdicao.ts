@@ -1,21 +1,21 @@
-import MeuPerfil from '@/pages/usuario/MeuPerfil.vue'
+import CadastroEdicao from '@/pages/jogo/CadastroEdicao.vue'
 import HomeLayout from '@/pages/Home.vue'
 
 export default [
   {
-    path: '/usuario',
+    path: '/jogo',
     component: HomeLayout,
     meta: { requiresAuth: true },
     children: [
       {
-        path: 'perfil',
-        name: 'MeuPerfil',
-        component: MeuPerfil,
+        path: 'cadastro',
+        name: 'CadastroJogo',
+        component: CadastroEdicao,
         meta: {
           requiresAuth: true,
           goesToMenu: true,
-          label: 'Meu Perfil',
-          menuGroup: 'Usuário' // 👈 nome do grupo
+          label: 'Cadastro',
+          menuGroup: 'Jogos'
         }
       }
     ]

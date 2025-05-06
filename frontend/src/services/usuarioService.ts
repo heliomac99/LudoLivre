@@ -1,5 +1,5 @@
 import api from './api'
-import { LoginModel, RegistroModel, UpdateModel } from '../models/usuarioModel'
+import { LoginModel, RegistroModel, UpdateModel } from '../models/usuario/usuarioModel'
 import { useToast } from 'vue-toastification'
 import TextoValor from '@/helpers/TextoValor'
 

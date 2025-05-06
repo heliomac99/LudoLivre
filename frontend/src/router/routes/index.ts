@@ -1,9 +1,9 @@
 import authRoutes from './auth'
 import usuarioRoutes from './usuario'
-import jogosRoutes from './jogos'
+import jogoRoutes from './jogo'
 
 export default [
   ...authRoutes,
   ...usuarioRoutes,
-  ...jogosRoutes
+  ...jogoRoutes
 ]
