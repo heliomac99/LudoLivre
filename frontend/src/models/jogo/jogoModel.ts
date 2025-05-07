@@ -5,4 +5,6 @@ export interface JogoModel {
   descricaoCompleta: string;
   imagens: File[];
   wallpaper: File[];
+  imagensBase64: string[];
+  wallpaperBase64: string;
 }

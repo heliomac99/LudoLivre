@@ -1,5 +1,8 @@
 <template>
-  <div class="container py-4">
+  <div v-if="screenLoading">
+    <LoadingSpinner></LoadingSpinner>
+  </div>
+  <div class="container py-4" v-else>
     <div class="row row-cols-1 row-cols-md-3 g-4">
       <div class="col" v-for="jogo in dataSource.itens" :key="jogo.id">
         <div class="card cardGame h-100 shadow-sm">
@@ -20,7 +23,7 @@
       </div>
     </div>
 
-    <div class="pagination mt-3" style="margin-top:20px">
+    <div class="pagination mt-3" style="margin-top:40x !important">
         <button class="page-btn" :disabled="dataSource.currentPage === 1" @click="paginaAnterior">
           &laquo;
         </button>
@@ -52,7 +55,7 @@
           <hr class="lore-divider" />
         </div>
         <CarrosselImagens :imagens="jogoSelecionado.imagensBase64" />
-        <button class="btn btn-secondary mt-3 w-100" @click="fechar">Fechar</button>
+        <button class="btn btn-primary mt-3 w-100" @click="fechar" style="margin-top:40px !important">Fechar</button>
       </div>
     </div>
   </div>
@@ -64,12 +67,14 @@ import jogoService from '@/services/jogoService'
 import CarrosselImagens from '@/components/Carrossel.vue'
 import { JogoModel } from '@/models/jogo/jogoModel'
 import { DataSource } from '@/helpers/DataSource'
+import LoadingSpinner from './LoadingSpinner.vue'
 
 export default defineComponent({
   name: 'GameLibrary',
-  components: { CarrosselImagens },
+  components: { CarrosselImagens, LoadingSpinner },
   data() {
     return {
+      screenLoading: false,
       dataSource: {
         itens: [],
         total: 0,
@@ -85,11 +90,14 @@ export default defineComponent({
   },
   methods: {
     async buscarJogos() {
+      this.screenLoading = true;
       try {
         const response = await jogoService.paginado(this.dataSource.currentPage, this.dataSource.pageSize)
-        this.dataSource = response
+        this.dataSource = response;
+        this.screenLoading = false;
       } catch (err) {
         console.error('Erro ao buscar jogos:', err)
+        this.screenLoading = false;
       }
     },
     verMais(jogo: JogoModel) {
@@ -187,15 +195,16 @@ button.btn.btn-secondary:hover {
 }
 
 .page-btn {
-  width: 2.5rem;
-  height: 2.5rem;
+  font-size: 0.85rem;
+  width: 2.2rem;
+  height: 2.2rem;
   border-radius: 50%;
   border: none;
   background-color: #fff;
   color: #000;
-  font-weight: 400;
   cursor: pointer;
   transition: 0.2s ease;
+  
 }
 
 .page-btn:hover:not(:disabled) {

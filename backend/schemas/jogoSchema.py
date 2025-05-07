@@ -1,13 +1,14 @@
-# jogoSchema.py
 from marshmallow import Schema, fields, validate
 import base64
 import os
+import concurrent.futures
 
 class JogoCadastroSchema(Schema):
     descricao = fields.Str(required=True, validate=validate.Length(min=1))
     descricaoCurta = fields.Str(required=True, validate=validate.Length(min=1))
     descricaoCompleta = fields.Str(required=True, validate=validate.Length(min=1))
     wallpaper = fields.Raw(required=False)
+    usuarioId = fields.Int(required=True)
 
 class JogoRespostaSchema(Schema):
     id = fields.Int()
@@ -17,6 +18,7 @@ class JogoRespostaSchema(Schema):
     nomeArquivoWallpaper = fields.Str()
     wallpaperBase64 = fields.Method("getWallpaperBase64")
     imagensBase64 = fields.Method("getImagensBase64")
+    usuarioId = fields.Int()
 
     def getWallpaperBase64(self, obj):
         if obj.nomeArquivoWallpaper:
@@ -29,12 +31,17 @@ class JogoRespostaSchema(Schema):
         return None
 
     def getImagensBase64(self, obj):
-        imagens = []
-        for img in obj.imagens:  # relacionamento Jogo.imagens
+        def carregar_e_codificar(img):
             caminho = os.path.join("arquivos", "jogo", str(obj.id), img.nomeArquivo)
             if os.path.exists(caminho):
                 with open(caminho, "rb") as f:
-                    encoded = base64.b64encode(f.read()).decode('utf-8')
+                    encoded = base64.b64encode(f.read()).decode("utf-8")
                     mime = "image/jpeg" if caminho.endswith(".jpg") else "image/png"
-                    imagens.append(f"data:{mime};base64,{encoded}")
-        return imagens
+                    return f"data:{mime};base64,{encoded}"
+            return None
+
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            resultados = list(executor.map(carregar_e_codificar, obj.imagens))
+
+        # Filtra os None (caso o arquivo não exista)
+        return [r for r in resultados if r]

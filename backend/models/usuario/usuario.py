@@ -8,10 +8,16 @@ class Usuario(db.Model):
     nome = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
+
     tiposUsuario = relationship(
         'TipoUsuario',
         secondary='usuarioTipoUsuario',
-        backref='usuario'    
+        backref='usuario'
     )
 
-
+    jogos = relationship(
+        'Jogo',
+        backref='usuario',
+        cascade='all, delete',
+        passive_deletes=True
+    )

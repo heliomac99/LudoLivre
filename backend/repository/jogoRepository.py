@@ -10,7 +10,8 @@ class JogoRepository:
             nome=data.get('descricaoCurta', '')[:100],
             descricao=data.get('descricao'),
             descricaoCurta=data.get('descricaoCurta'),
-            descricaoCompleta=data.get('descricaoCompleta')
+            descricaoCompleta=data.get('descricaoCompleta'),
+            usuarioId=data.get('usuarioId')
         )
         db.session.add(jogo)
         return jogo

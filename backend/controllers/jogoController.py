@@ -14,7 +14,9 @@ service = JogoService()
 @bp.route("", methods=["POST"])
 @jwt_required()
 def cadastrarJogo():
+    usuarioId = request.headers.get("X-Usuario-Id")
     data = request.form.to_dict()
+    data["usuarioId"] = usuarioId
     errors = cadastroSchema.validate(data)
     if errors:
         return jsonify(errors), 400

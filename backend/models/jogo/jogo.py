@@ -1,6 +1,5 @@
 from main import db
 from sqlalchemy.orm import relationship
-from datetime import datetime
 
 class Jogo(db.Model):
     __tablename__ = 'jogo'
@@ -11,6 +10,8 @@ class Jogo(db.Model):
     descricaoCurta = db.Column(db.String(255), nullable=True)
     descricaoCompleta = db.Column(db.Text, nullable=True)
     nomeArquivoWallpaper = db.Column(db.String(255), nullable=True)
+
+    usuarioId = db.Column(db.Integer, db.ForeignKey('usuario.id', ondelete='CASCADE'), nullable=False)
 
     imagens = relationship(
         'JogoImagem',
