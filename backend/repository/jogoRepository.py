@@ -1,6 +1,8 @@
 # jogoRepository.py
 from models.jogo.jogo import Jogo
 from main import db
+from helpers.dataSource import DataSource
+from math import ceil
 
 class JogoRepository:
     def criar(self, data):
@@ -23,11 +25,21 @@ class JogoRepository:
         db.session.commit()
         return jogo
 
-    def obter_por_id(self, jogo_id):
+    def obterPorId(self, jogo_id):
         jogo = db.session.get(Jogo, jogo_id)
         if not jogo:
             raise LookupError("Jogo não encontrado")
         return jogo
 
-    def listar_todos(self):
+    def listar(self):
         return Jogo.query.all()
+    
+    def paginado(self, ds: DataSource):
+        paginated = Jogo.query.paginate(page=ds.currentPage, per_page=ds.pageSize, error_out=False)
+        return DataSource(
+            itens=paginated.items,
+            total=paginated.total,
+            currentPage=ds.currentPage,
+            pageSize=ds.pageSize,
+            pageCount=ceil(paginated.total / ds.pageSize) if ds.pageSize else 1
+        )

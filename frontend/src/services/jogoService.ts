@@ -1,5 +1,6 @@
 import api from './api'
 import { JogoModel } from '@/models/jogo/jogoModel'
+import { DataSource } from '@/helpers/DataSource'
 
 class JogoService {
   async cadastrar(model: JogoModel): Promise<void> {
@@ -7,7 +8,7 @@ class JogoService {
     formData.append('descricao', model.descricao)
     formData.append('descricaoCurta', model.descricaoCurta)
     formData.append('descricaoCompleta', model.descricaoCompleta)
-  
+
     if (Array.isArray(model.imagens)) {
       model.imagens.forEach(img => {
         formData.append('imagens', img)
@@ -17,18 +18,19 @@ class JogoService {
     if (Array.isArray(model.wallpaper) && model.wallpaper.length > 0) {
       formData.append('wallpaper', model.wallpaper[0])
     }
-  
-    const response = await api.post('/jogo', formData, {
+
+    await api.post('/jogo', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     })
-  
-    return response.data
-  } 
-  
-  async listarTodos(): Promise<JogoModel[]> {
-    const response = await api.get<JogoModel[]>('/jogo')
+  }
+
+  async paginado(page: number, pageSize: number): Promise<DataSource<JogoModel>> {
+    const response = await api.post<DataSource<JogoModel>>('/jogo/paginado', {
+      page,
+      page_size: pageSize
+    })
     return response.data
   }
   

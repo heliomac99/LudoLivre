@@ -2,6 +2,7 @@
 from repository.jogoRepository import JogoRepository
 from services.uploadService import UploadService
 from main import db
+from helpers.dataSource import DataSource
 
 class JogoService:
     def __init__(self):
@@ -21,7 +22,10 @@ class JogoService:
         return self.repo.atualizar(jogo_id, data)
 
     def obterPorId(self, jogo_id):
-        return self.repo.obter_por_id(jogo_id)
+        return self.repo.obterPorId(jogo_id)
 
     def listarTodos(self):
-        return self.repo.listar_todos()
+        return self.repo.listar()
+    
+    def paginado(self, ds: DataSource):
+        return self.repo.paginado(ds)

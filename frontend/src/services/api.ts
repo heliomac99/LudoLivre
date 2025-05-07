@@ -7,6 +7,7 @@ const toast = useToast()
 
 const api = axios.create({
   baseURL: 'http://localhost:5000',
+  withCredentials: true
 })
 
 api.interceptors.request.use(config => {

@@ -2,6 +2,8 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from schemas.jogoSchema import JogoCadastroSchema, JogoRespostaSchema
 from services.jogoService import JogoService
+from helpers.dataSource import DataSource
+
 
 bp = Blueprint("jogos", __name__, url_prefix="/jogo")
 
@@ -55,8 +57,22 @@ def obterJogo(jogoId):
     except LookupError as e:
         return jsonify({"error": str(e)}), 404
 
-@bp.route("", methods=["GET"])
+
+
+@bp.route("/paginado", methods=["POST"])
 @jwt_required()
-def listarJogos():
-    jogos = service.listarTodos()
-    return jsonify([respostaSchema.dump(j) for j in jogos])
+def paginado():
+    data = request.get_json() or {}
+
+    try:
+        page = int(data.get("page", 1)) or 1
+        page_size = int(data.get("page_size", 10)) or 10
+    except ValueError:
+        return jsonify({"error": "Parâmetros de paginação inválidos"}), 400
+
+    ds = DataSource.vazio(page, page_size)
+    jogos_page = service.paginado(ds)
+
+    return jsonify(jogos_page.to_dict(respostaSchema.dump))
+
+

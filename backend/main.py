@@ -5,15 +5,10 @@ from extensions import db, ma
 from flask_jwt_extended import JWTManager
 from datetime import timedelta
 
-
-
-
-
-import debugpy
-
 def create_app():
     app = Flask(__name__)
-    CORS(app)
+    CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
+
 
     app.config["SQLALCHEMY_DATABASE_URI"] = Config.SQLALCHEMY_DATABASE_URI
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = Config.SQLALCHEMY_TRACK_MODIFICATIONS
@@ -26,10 +21,6 @@ def create_app():
     db.init_app(app)
     ma.init_app(app)
 
-    @app.after_request
-    def set_default_headers(response):
-        response.headers["Content-Type"] = "application/json; charset=utf-8"
-        return response
 
     with app.app_context():
         from models.usuario.usuario import Usuario
@@ -59,9 +50,5 @@ def create_app():
 
 
 if __name__ == "__main__":
-    debugpy.listen(("0.0.0.0", 5680))
-    print("⏳ Aguardando debugger em 5680...")
-    debugpy.wait_for_client()
-    print("🐍 Rodando Flask...")
     app = create_app()
-    app.run(host="0.0.0.0", port=5000)
+
