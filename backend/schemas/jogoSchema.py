@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields, validate
-import base64
-import os
-import concurrent.futures
+from services.dowloadService import DownloadService
+
+downloadService = DownloadService()
 
 class JogoCadastroSchema(Schema):
     descricao = fields.Str(required=True, validate=validate.Length(min=1))
@@ -22,26 +22,19 @@ class JogoRespostaSchema(Schema):
 
     def getWallpaperBase64(self, obj):
         if obj.nomeArquivoWallpaper:
-            caminho = os.path.join("arquivos", "jogo", str(obj.id), obj.nomeArquivoWallpaper)
-            if os.path.exists(caminho):
-                with open(caminho, "rb") as f:
-                    encoded = base64.b64encode(f.read()).decode('utf-8')
-                    mime = "image/jpeg" if obj.nomeArquivoWallpaper.endswith(".jpg") else "image/png"
-                    return f"data:{mime};base64,{encoded}"
+            try:
+                return downloadService.baixarImagemBase64(obj.id, obj.nomeArquivoWallpaper)
+            except FileNotFoundError:
+                return None
         return None
 
     def getImagensBase64(self, obj):
-        def carregar_e_codificar(img):
-            caminho = os.path.join("arquivos", "jogo", str(obj.id), img.nomeArquivo)
-            if os.path.exists(caminho):
-                with open(caminho, "rb") as f:
-                    encoded = base64.b64encode(f.read()).decode("utf-8")
-                    mime = "image/jpeg" if caminho.endswith(".jpg") else "image/png"
-                    return f"data:{mime};base64,{encoded}"
-            return None
-
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            resultados = list(executor.map(carregar_e_codificar, obj.imagens))
-
-        # Filtra os None (caso o arquivo não exista)
-        return [r for r in resultados if r]
+        imagens_base64 = []
+        for imagem in obj.imagens:
+            try:
+                b64 = downloadService.baixarImagemBase64(obj.id, imagem.nomeArquivo)
+                if b64:
+                    imagens_base64.append(b64)
+            except FileNotFoundError:
+                continue
+        return imagens_base64
