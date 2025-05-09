@@ -159,22 +159,35 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-.navbar-logo {
-  max-height: 55px;
-  max-width: 120px;
-  object-fit: contain;
-  cursor: pointer;
-}
+<style lang="scss" scoped>
+@use '@/assets/styles/variables' as *;
 
-.home-layout {
-  min-height: 100vh;
-  background-color: #f8f9fa;
+.navbar {
+  background-color: $color-light;
 }
 
 .navbar {
   min-height: 60px;
+  height: 50px;
+  background-color: #{$color-light} !important;
+  border-bottom: 0.5px solid grey;
+  box-shadow: 0 1px 2px rgba(0, 50, 1, 0.15);
+
 }
+
+.navbar-logo {
+  max-height: 45px;
+  max-width: 110px;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+
+.home-layout {
+  min-height: 100vh;
+  background-color: #f1f3f5;
+}
+
 
 .sidebar-logo {
   width: 100px;
@@ -183,28 +196,36 @@ export default defineComponent({
 }
 
 .bg-dark {
-  background-color: #2a3042 !important;
+  background: linear-gradient(180deg, #3b3a68, #2e2d52);
+  color: #e0e0e0;
 }
 
 .nav-link,
 .sublink {
   font-size: small;
-  color: #adb5bd;
+  color: #cdd3e0;
 }
 
 .nav-link:hover,
 .sublink:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(177, 151, 252, 0.1);
   color: #fff;
 }
 
 .nav-link.active,
 .sublink.active {
-  color: #fff !important;
+  color: #b197fc !important;
   font-weight: 600;
 }
 
-.cursor-pointer {
-  cursor: pointer;
+.btn-primary {
+  background-color: #5f3dc4 !important;
+  border-color: #5f3dc4 !important;
 }
+
+.btn-primary:hover {
+  background-color: #4c2ea9 !important;
+  border-color: #4c2ea9 !important;
+}
+
 </style>

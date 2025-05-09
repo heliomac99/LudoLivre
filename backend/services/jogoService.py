@@ -29,3 +29,6 @@ class JogoService:
     
     def paginado(self, ds: DataSource):
         return self.repo.paginado(ds)
+    
+    def paginadoPorUsuario(self, ds: DataSource, usuarioId: int):
+        return self.repo.paginadoPorUsuario(ds, usuarioId)

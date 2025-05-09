@@ -23,7 +23,7 @@ import 'vue-toastification/dist/index.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap'
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import '@/assets/styles/custom-bootstrap.scss'
+import '@/assets/styles/variables.scss'
 import '@/validations/yupLocale'
 import '@vueform/multiselect/themes/default.css'
 

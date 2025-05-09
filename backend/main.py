@@ -4,6 +4,8 @@ from flask_cors import CORS
 from extensions import db, ma
 from flask_jwt_extended import JWTManager
 from datetime import timedelta
+import debugpy
+
 
 def create_app():
     app = Flask(__name__)
@@ -51,4 +53,10 @@ def create_app():
 
 if __name__ == "__main__":
     app = create_app()
+    debugpy.listen(("0.0.0.0", 5678))
+    print("🔍 Aguardando debugger se conectar...")
+    debugpy.wait_for_client()
+    debugpy.breakpoint()
+    app.run(host="0.0.0.0", port=5000, debug=False)
+
 

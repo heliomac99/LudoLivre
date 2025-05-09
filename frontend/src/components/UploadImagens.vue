@@ -54,23 +54,43 @@
 </template>
 
 <script>
-import imageCompression from 'browser-image-compression'
-
 export default {
   name: 'UploadImagens',
   props: {
     multiplo: {
       type: Boolean,
       default: true
+    },
+    arquivos: {
+      type: Array,
+      default: () => []
     }
   },
   emits: ['update:arquivos'],
   data() {
     return {
-      arquivos: [],
       previewUrls: [],
       isDragging: false,
       isUploading: false
+    }
+  },
+  watch: {
+    arquivos: {
+      handler(novosArquivos) {
+        console.log(novosArquivos);
+        this.previewUrls = (novosArquivos || []).map(file => URL.createObjectURL(file))
+      },
+      immediate: true
+    }
+  },
+  computed: {
+    arquivosInternos: {
+      get() {
+        return this.arquivos
+      },
+      set(val) {
+        this.$emit('update:arquivos', val)
+      }
     }
   },
   methods: {
@@ -78,38 +98,22 @@ export default {
       this.isUploading = true
       try {
         const selectedFiles = Array.from(files)
+
         if (!this.multiplo) {
-          this.arquivos = []
-          this.previewUrls = []
+          this.arquivosInternos = [selectedFiles[0]]
+          this.previewUrls = [URL.createObjectURL(selectedFiles[0])]
+        } else {
+          this.arquivosInternos = [...this.arquivosInternos, ...selectedFiles]
+          this.previewUrls = [...this.previewUrls, ...selectedFiles.map(f => URL.createObjectURL(f))]
         }
-
-        for (const file of selectedFiles) {
-          const compressed = await imageCompression(file, {
-            maxSizeMB: 1,
-            maxWidthOrHeight: 1024,
-            useWebWorker: true
-          })
-
-          if (!this.multiplo) {
-            this.arquivos = [compressed]
-            this.previewUrls = [URL.createObjectURL(compressed)]
-            break
-          } else {
-            this.arquivos.push(compressed)
-            this.previewUrls.push(URL.createObjectURL(compressed))
-          }
-        }
-
-        this.$emit('update:arquivos', this.arquivos)
       } catch (error) {
-        console.error('Erro ao comprimir imagem:', error)
+        console.error('Erro ao processar imagens:', error)
       } finally {
         this.isUploading = false
       }
     },
     onFilesSelected(event) {
-      const input = event.target
-      if (input.files) this.processFiles(input.files)
+      if (event.target.files) this.processFiles(event.target.files)
     },
     onDrop(event) {
       this.isDragging = false
@@ -124,9 +128,10 @@ export default {
       this.isDragging = false
     },
     removerImagem(index) {
-      this.arquivos.splice(index, 1)
+      const novos = [...this.arquivosInternos]
+      novos.splice(index, 1)
+      this.arquivosInternos = novos
       this.previewUrls.splice(index, 1)
-      this.$emit('update:arquivos', this.arquivos)
     }
   }
 }

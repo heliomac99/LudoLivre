@@ -16,9 +16,12 @@
             <h5 class="card-title">{{ jogo.descricaoCurta }}</h5>
             <p class="card-text text-muted">{{ jogo.descricao }}</p>
           </div>
+
           <div class="card-footer border-0 bg-transparent">
-            <button class="btn btn-primary w-100" @click="verMais(jogo)">Ver mais</button>
+            <slot name="botao" :jogo="jogo">
+            </slot>
           </div>
+
         </div>
       </div>
     </div>
@@ -72,6 +75,13 @@ import LoadingSpinner from './LoadingSpinner.vue'
 export default defineComponent({
   name: 'GameLibrary',
   components: { CarrosselImagens, LoadingSpinner },
+  props: {
+  usuarioId: {
+      type: Number,
+      required: false,
+      default: null
+    }
+  },
   data() {
     return {
       screenLoading: false,
@@ -92,11 +102,16 @@ export default defineComponent({
     async buscarJogos() {
       this.screenLoading = true;
       try {
-        const response = await jogoService.paginado(this.dataSource.currentPage, this.dataSource.pageSize)
+        let response;
+        if (this.usuarioId != null) {
+          response = await jogoService.paginadoPorUsuario(this.usuarioId, this.dataSource.currentPage, this.dataSource.pageSize)
+        } else {
+          response = await jogoService.paginado(this.dataSource.currentPage, this.dataSource.pageSize)
+        }
         this.dataSource = response;
-        this.screenLoading = false;
       } catch (err) {
-        console.error('Erro ao buscar jogos:', err)
+        console.error('Erro ao buscar jogos:', err);
+      } finally {
         this.screenLoading = false;
       }
     },

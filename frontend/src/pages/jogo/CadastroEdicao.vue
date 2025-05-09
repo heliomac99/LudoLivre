@@ -2,8 +2,13 @@
   <div class="py-4 px-4">
     <h4 class="titulo mb-3">Cadastro de Jogo</h4>
 
-    <div class="card card-form shadow-sm border-0 p-5 w-100">
-      <Form :validation-schema="schema" @submit="salvar">
+    <div class="card card-form shadow-sm border-0 p-5 w-100"> 
+      
+      <div v-if="screenLoading">
+        <LoadingSpinner></LoadingSpinner>
+      </div>
+
+      <Form :validation-schema="schema" @submit="salvar" v-else>
 
         <div class="mb-3">
           <label for="descricaoCurta" class="form-label">Descrição Curta</label>
@@ -65,6 +70,8 @@ import { JogoModel } from '@/models/jogo/jogoModel'
 import ButtonLoading from '@/components/ButtonLoading.vue'
 import jogoService from '@/services/jogoService'
 import { useToast } from 'vue-toastification'
+import { base64ToFile, base64ArrayToFiles } from '@/utils'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 const toast = useToast()
 
@@ -74,11 +81,26 @@ export default defineComponent({
     Form,
     Field,
     UploadImagens,
-    ButtonLoading
+    ButtonLoading,
+    LoadingSpinner
+  },
+  async mounted() {
+    const id = this.$route.params.id
+    if (id) {
+      this.screenLoading = true
+      const result = await jogoService.carregar(Number(id))
+      this.model = result;
+      this.model.imagens = base64ArrayToFiles(result.imagensBase64 || []),
+      this.model.wallpaper = result.wallpaperBase64
+          ? [base64ToFile(result.wallpaperBase64, result.nomeArquivoWallpaper)]
+          : []
+      this.screenLoading = false;
+    }
   },
   data() {
     return {
       model: {} as JogoModel,
+      screenLoading: false,
       isLoading: false,
       schema: yup.object({
         descricao: yup.string().required('A descrição é obrigatória'),
@@ -88,16 +110,30 @@ export default defineComponent({
     }
   },
   methods: {
-    salvar() {
-      this.isLoading = true;
-      jogoService.cadastrar(this.model).then((data) =>{
-        this.isLoading = false;
-        toast.success("Jogo salvo com sucesso.")
-      }).catch(error => {
-        this.isLoading = false;
-        toast.error(error.response.data.error);
-      })
+   async salvar() {
+      this.isLoading = true
+      const id = this.$route.params.id
+
+      try {
+        if (id) {
+          await jogoService.atualizar(Number(id), this.model)
+          toast.success('Jogo atualizado com sucesso.')
+        } else {
+          await jogoService.cadastrar(this.model)
+          toast.success('Jogo salvo com sucesso.')
+        }
+      } catch (error: unknown) {
+        if (typeof error === 'object' && error !== null && 'response' in error) {
+          toast.error((error as any).response?.data?.error || 'Erro ao salvar')
+        } else {
+          toast.error('Erro inesperado ao salvar')
+        }
+      } finally {
+        this.isLoading = false
+      }
     }
+
+
   }
 })
 </script>

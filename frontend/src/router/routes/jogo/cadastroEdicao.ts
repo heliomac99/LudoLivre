@@ -8,7 +8,7 @@ export default [
     meta: { requiresAuth: true },
     children: [
       {
-        path: 'cadastro',
+        path: 'cadastroEdicao',
         name: 'CadastroJogo',
         component: CadastroEdicao,
         meta: {
@@ -16,6 +16,15 @@ export default [
           goesToMenu: true,
           label: 'Cadastro',
           menuGroup: 'Jogos'
+        }
+      },
+      {
+        path: 'cadastroEdicao/:id',
+        name: 'EdicaoJogo',
+        component: CadastroEdicao,
+        meta: {
+          requiresAuth: true,
+          goesToMenu: false
         }
       }
     ]

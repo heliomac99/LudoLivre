@@ -7,4 +7,5 @@ export interface JogoModel {
   wallpaper: File[];
   imagensBase64: string[];
   wallpaperBase64: string;
+  nomeArquivoWallpaper: string;
 }

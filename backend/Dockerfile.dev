@@ -2,20 +2,15 @@ FROM python:3.13.2-alpine3.21
 
 WORKDIR /app
 
-# Instala utilitários necessários
 RUN apk add --no-cache bash coreutils
 
-# Instala debugpy
-RUN pip install debugpy
-
-# Instala dependências do Python
-COPY requirements.txt ./
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia o restante do projeto
+RUN pip install debugpy
+
 COPY . .
 
 ENV PYTHONUNBUFFERED=1
 
-# Roda o script que espera o MySQL e depois inicia o Flask
-CMD ["python", "entrypoint.py"]
+CMD ["python", "entryPoint.py"]

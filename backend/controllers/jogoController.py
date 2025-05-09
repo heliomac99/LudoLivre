@@ -40,7 +40,7 @@ def cadastrarJogo():
 @bp.route("/<int:jogoId>", methods=["PUT"])
 @jwt_required()
 def atualizarJogo(jogoId):
-    data = request.get_json()
+    data = request.form.to_dict()
     try:
         jogo = service.atualizar(jogoId, data)
         return jsonify({
@@ -76,5 +76,23 @@ def paginado():
     jogos_page = service.paginado(ds)
 
     return jsonify(jogos_page.to_dict(respostaSchema.dump))
+
+
+@bp.route("/paginadoPorUsuario", methods=["POST"])
+@jwt_required()
+def paginado_por_usuario():
+    data = request.get_json() or {}
+
+    try:
+        page = int(data.get("page", 1)) or 1
+        pageSize = int(data.get("page_size", 10)) or 10
+        usuarioId = int(data.get("usuarioId"))
+    except (ValueError, TypeError):
+        return jsonify({"error": "Parâmetros de paginação inválidos"}), 400
+
+    ds = DataSource.vazio(page, pageSize)
+    jogosPage = service.paginadoPorUsuario(ds, usuarioId)
+
+    return jsonify(jogosPage.to_dict(respostaSchema.dump))
 
 
