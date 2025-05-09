@@ -23,7 +23,6 @@ class JogoRepository:
         jogo.descricao = data.get('descricao', jogo.descricao)
         jogo.descricaoCurta = data.get('descricaoCurta', jogo.descricaoCurta)
         jogo.descricaoCompleta = data.get('descricaoCompleta', jogo.descricaoCompleta)
-        db.session.commit()
         return jogo
 
     def obterPorId(self, jogo_id):

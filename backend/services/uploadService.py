@@ -7,6 +7,27 @@ from flask import send_file
 
 class UploadService:
 
+    def excluirImagens(self, jogoId: int):
+        pasta = os.path.join("arquivos", "jogo", str(jogoId))
+        imagens_antigas = JogoImagem.query.filter_by(jogoId=jogoId).all()
+        for imagem in imagens_antigas:
+            caminho = os.path.join(pasta, imagem.nomeArquivo)
+            if os.path.exists(caminho):
+                os.remove(caminho)
+            db.session.delete(imagem)
+
+    def excluirWallpaper(self, jogoId: int):
+        pasta = os.path.join("arquivos", "jogo", str(jogoId))
+        jogo = db.session.get(Jogo, jogoId)
+        if not jogo:
+            raise ValueError("Jogo não encontrado")
+
+        if jogo.nomeArquivoWallpaper:
+            caminho = os.path.join(pasta, jogo.nomeArquivoWallpaper)
+            if os.path.exists(caminho):
+                os.remove(caminho)
+            jogo.nomeArquivoWallpaper = None
+
     def salvarImagensJogo(self, jogoId: int, arquivos: list[FileStorage]):
         pasta = os.path.join("arquivos", "jogo", str(jogoId))
         os.makedirs(pasta, exist_ok=True)
@@ -46,40 +67,25 @@ class UploadService:
         if not arquivo or arquivo.filename == "":
             raise ValueError("Wallpaper inválido")
 
-        extensoes_aceitas = {
+        extensoesAceitas = {
             "image/png": ".png",
             "image/jpeg": ".jpg",
             "image/jpg": ".jpg"
         }
 
-        extensao = extensoes_aceitas.get(arquivo.content_type)
+        extensao = extensoesAceitas.get(arquivo.content_type)
         if not extensao:
             raise ValueError("Extensão de wallpaper não suportada")
 
         pasta = os.path.join("arquivos", "jogo", str(jogoId))
         os.makedirs(pasta, exist_ok=True)
 
-        nome_arquivo = f"wallpaper{extensao}"
-        caminho = os.path.join(pasta, nome_arquivo)
-        arquivo.save(caminho)
-
-        # Atualiza o campo no modelo Jogo
         jogo = db.session.get(Jogo, jogoId)
         if not jogo:
             raise ValueError("Jogo não encontrado")
-        
+
+        nome_arquivo = f"wallpaper{extensao}"
+        caminho_novo = os.path.join(pasta, nome_arquivo)
+        arquivo.save(caminho_novo)
+
         jogo.nomeArquivoWallpaper = nome_arquivo
-
-    def baixarArquivo(self, jogoId: int, nome_arquivo: str):
-        pasta = os.path.join("arquivos", "jogo", str(jogoId))
-        caminho = os.path.join(pasta, nome_arquivo)
-
-        if not os.path.exists(caminho):
-            raise FileNotFoundError("Arquivo não encontrado")
-
-        return send_file(
-            caminho,
-            as_attachment=False,  # ou True se quiser forçar download
-            download_name=nome_arquivo,
-            mimetype='application/octet-stream'  # ou detecte com mimetypes
-        )

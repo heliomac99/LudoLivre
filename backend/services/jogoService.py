@@ -7,22 +7,38 @@ from helpers.dataSource import DataSource
 class JogoService:
     def __init__(self):
         self.repo = JogoRepository()
-        self.upload_service = UploadService()
+        self.uploadService = UploadService()
 
     def cadastrar(self, data, arquivos, wallpaper):
         with db.session.begin():
             jogo = self.repo.criar(data)
             db.session.flush()
-            self.upload_service.salvarImagensJogo(jogo.id, arquivos)
-            self.upload_service.salvarWallpaper(jogo.id, wallpaper)
+            self.uploadService.salvarImagensJogo(jogo.id, arquivos)
+            self.uploadService.salvarWallpaper(jogo.id, wallpaper)
         return jogo
 
 
-    def atualizar(self, jogo_id, data):
-        return self.repo.atualizar(jogo_id, data)
+    def atualizar(self, jogo_id, data, arquivos, wallpaper):
+        with db.session.begin():
+            # Atualiza os dados do jogo (sem commit interno)
+            jogo = self.repo.atualizar(jogo_id, data)
+            db.session.flush()
 
-    def obterPorId(self, jogo_id):
-        return self.repo.obterPorId(jogo_id)
+            # Remove arquivos antigos
+            self.uploadService.excluirImagens(jogo_id)
+            self.uploadService.excluirWallpaper(jogo_id)
+
+            # Salva novos arquivos
+            self.uploadService.salvarImagensJogo(jogo_id, arquivos)
+            self.uploadService.salvarWallpaper(jogo_id, wallpaper)
+
+        return jogo
+
+
+
+
+    def obterPorId(self, jogoId):
+        return self.repo.obterPorId(jogoId)
 
     def listarTodos(self):
         return self.repo.listar()

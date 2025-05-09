@@ -40,15 +40,24 @@ def cadastrarJogo():
 @bp.route("/<int:jogoId>", methods=["PUT"])
 @jwt_required()
 def atualizarJogo(jogoId):
+    usuarioId = request.headers.get("X-Usuario-Id")
     data = request.form.to_dict()
+    data["usuarioId"] = usuarioId
+
+    arquivos = request.files.getlist("imagens")
+    wallpaper = request.files.get("wallpaper")
+
     try:
-        jogo = service.atualizar(jogoId, data)
+        jogo = service.atualizar(jogoId, data, arquivos, wallpaper)
         return jsonify({
             "msg": "Jogo atualizado com sucesso",
             "jogo": respostaSchema.dump(jogo)
         })
     except LookupError as e:
         return jsonify({"error": str(e)}), 404
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
 
 @bp.route("/<int:jogoId>", methods=["GET"])
 @jwt_required()
