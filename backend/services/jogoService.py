@@ -3,6 +3,7 @@ from repository.jogoRepository import JogoRepository
 from services.uploadService import UploadService
 from main import db
 from helpers.dataSource import DataSource
+from models.jogo.jogo import Jogo
 
 class JogoService:
     def __init__(self):
@@ -18,23 +19,34 @@ class JogoService:
         return jogo
 
 
-    def atualizar(self, jogo_id, data, arquivos, wallpaper):
+    def atualizar(self, jogoId, data, arquivos, wallpaper):
         with db.session.begin():
             # Atualiza os dados do jogo (sem commit interno)
-            jogo = self.repo.atualizar(jogo_id, data)
+            jogo = self.repo.atualizar(jogoId, data)
             db.session.flush()
 
             # Remove arquivos antigos
-            self.uploadService.excluirImagens(jogo_id)
-            self.uploadService.excluirWallpaper(jogo_id)
+            self.uploadService.excluirImagens(jogoId)
+            self.uploadService.excluirWallpaper(jogoId)
 
             # Salva novos arquivos
-            self.uploadService.salvarImagensJogo(jogo_id, arquivos)
-            self.uploadService.salvarWallpaper(jogo_id, wallpaper)
+            self.uploadService.salvarImagensJogo(jogoId, arquivos)
+            self.uploadService.salvarWallpaper(jogoId, wallpaper)
 
         return jogo
+    
+    def deletar(self, jogoId: int):
+        jogo = db.session.get(Jogo, jogoId)
+        if not jogo:
+            raise LookupError("Jogo não encontrado")
 
+        # Remove arquivos do disco antes de excluir do banco
+        self.uploadService.excluirImagens(jogoId)
+        self.uploadService.excluirWallpaper(jogoId)
+        self.uploadService.excluirPastaJogo(jogoId)
 
+        db.session.delete(jogo)
+        db.session.commit()
 
 
     def obterPorId(self, jogoId):

@@ -1,6 +1,5 @@
-import MeusJogos from '@/pages/jogo/MeusJogos.vue'
+import Permissao from '@/pages/permissao/Permissao.vue'
 import HomeLayout from '@/pages/Home.vue'
-import permissao from '../auth/permissao'
 import { EPermissao } from '@/helpers/Enums'
 
 export default [
@@ -10,15 +9,15 @@ export default [
     meta: { requiresAuth: true },
     children: [
       {
-        path: 'meusJogos',
-        name: 'MeusJogos',
-        component: MeusJogos,
+        path: 'permissao',
+        name: 'Permissao',
+        component: Permissao,
         meta: {
           requiresAuth: true,
           goesToMenu: true,
-          label: 'Meus Jogos',
-          menuGroup: 'Jogos',
-          permissao: EPermissao.CadastroJogo
+          label: 'Permissões',
+          menuGroup: 'Configurações',
+          permissao: EPermissao.Permissoes
         }
       }
     ]

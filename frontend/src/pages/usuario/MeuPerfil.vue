@@ -61,8 +61,10 @@ import { useToast } from 'vue-toastification'
 import type { UpdateModel } from '@/models/usuario/usuarioModel'
 import Multiselect from '@vueform/multiselect'
 import TextoValor from '@/helpers/TextoValor'
+import { useUsuarioStore } from '@/stores/usuario'
 
 const toast = useToast()
+
 export default defineComponent({
   components: { ButtonLoading, Multiselect },
   data() {
@@ -78,9 +80,11 @@ export default defineComponent({
   },
   methods: {
     async salvar() {
+      const usuarioStore = useUsuarioStore()
       this.isLoading = true
       try {
         await usuarioService.atualizar(this.model)
+        await usuarioStore.carregarPermissoes()
         toast.success('Perfil atualizado com sucesso!')
       } catch (error: any) {
         console.error('Erro ao atualizar perfil:', error.response?.data || error)

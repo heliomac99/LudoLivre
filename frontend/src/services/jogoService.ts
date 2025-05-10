@@ -73,6 +73,12 @@ class JogoService {
     const response = await api.get<JogoModel>(`/jogo/${id}`)
     return response.data
   }
+
+  async deletar(id: number): Promise<void> {
+    await api.delete(`/jogo/${id}`)
+  }
+
+  
 }
 
 export default new JogoService()

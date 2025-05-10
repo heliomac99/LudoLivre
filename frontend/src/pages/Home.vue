@@ -69,18 +69,16 @@
     <!-- Conteúdo -->
     <div class="flex-grow-1" :style="{ marginLeft: '250px' }">
       <nav class="navbar bg-white shadow-sm px-4 d-flex justify-content-between align-items-center">
-        <!-- Logo centralizado -->
         <div class="flex-grow-1 d-flex justify-content-center">
           <RouterLink to="/home">
             <img :src="logo" alt="Logo" class="navbar-logo" />
           </RouterLink>
         </div>
-
-        <!-- Espaço reservado à direita para alinhamento -->
         <div style="width: 32px;"></div>
       </nav>
 
       <main class="p-4">
+        <Voltar />
         <router-view />
       </main>
     </div>
@@ -94,9 +92,10 @@ import { useRouter } from 'vue-router'
 import logo from '@/assets/logoLudoLivre.png'
 import type { RouteRecordRaw } from 'vue-router'
 import ButtonLoading from '../components/ButtonLoading.vue'
+import Voltar from '@/components/Voltar.vue'
 
 export default defineComponent({
-  components: { ButtonLoading },
+  components: { ButtonLoading, Voltar },
   data() {
     return {
       isLoadingLogout: false,
@@ -107,6 +106,7 @@ export default defineComponent({
       iconMap: {
         Usuário: 'bi-people',
         Jogos: 'bi-controller',
+        Configurações: 'bi-gear'
       }
     }
   },
@@ -116,13 +116,23 @@ export default defineComponent({
     },
     menuGroups(): Record<string, RouteRecordRaw[]> {
       const grouped: Record<string, RouteRecordRaw[]> = {}
+      const permissoes = this.usuarioStore.permissoes
+
       this.$router.getRoutes().forEach(route => {
         const meta = route.meta || {}
+        const permissaoNecessaria = meta.permissao
+
         if (meta.goesToMenu && meta.menuGroup) {
-          if (!grouped[meta.menuGroup]) grouped[meta.menuGroup] = []
-          grouped[meta.menuGroup].push(route)
+          if (
+            permissaoNecessaria === undefined ||
+            permissoes.includes(permissaoNecessaria)
+          ) {
+            if (!grouped[meta.menuGroup]) grouped[meta.menuGroup] = []
+            grouped[meta.menuGroup].push(route)
+          }
         }
       })
+
       return grouped
     }
   },
@@ -172,7 +182,6 @@ export default defineComponent({
   background-color: #{$color-light} !important;
   border-bottom: 0.5px solid grey;
   box-shadow: 0 1px 2px rgba(0, 50, 1, 0.15);
-
 }
 
 .navbar-logo {
@@ -182,12 +191,10 @@ export default defineComponent({
   cursor: pointer;
 }
 
-
 .home-layout {
   min-height: 100vh;
   background-color: #f1f3f5;
 }
-
 
 .sidebar-logo {
   width: 100px;
@@ -227,5 +234,4 @@ export default defineComponent({
   background-color: #4c2ea9 !important;
   border-color: #4c2ea9 !important;
 }
-
 </style>

@@ -1,5 +1,6 @@
 import CadastroEdicao from '@/pages/jogo/CadastroEdicao.vue'
 import HomeLayout from '@/pages/Home.vue'
+import { EPermissao } from '@/helpers/Enums'
 
 export default [
   {
@@ -13,9 +14,10 @@ export default [
         component: CadastroEdicao,
         meta: {
           requiresAuth: true,
-          goesToMenu: true,
+          goesToMenu: false,
           label: 'Cadastro',
-          menuGroup: 'Jogos'
+          menuGroup: 'Jogos',
+          permissao: EPermissao.CadastroJogo
         }
       },
       {
@@ -24,7 +26,8 @@ export default [
         component: CadastroEdicao,
         meta: {
           requiresAuth: true,
-          goesToMenu: false
+          goesToMenu: false,
+          permissao: EPermissao.CadastroJogo
         }
       }
     ]

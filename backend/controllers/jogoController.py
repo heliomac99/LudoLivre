@@ -58,7 +58,6 @@ def atualizarJogo(jogoId):
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
 
-
 @bp.route("/<int:jogoId>", methods=["GET"])
 @jwt_required()
 def obterJogo(jogoId):
@@ -67,8 +66,17 @@ def obterJogo(jogoId):
         return jsonify(respostaSchema.dump(jogo))
     except LookupError as e:
         return jsonify({"error": str(e)}), 404
-
-
+    
+    
+@bp.route("/<int:jogoId>", methods=["DELETE"])
+@jwt_required()
+def deletarJogo(jogoId):
+    try:
+        service.deletar(jogoId)
+        return jsonify({"msg": "Jogo deletado com sucesso."}), 200
+    except LookupError as e:
+        return jsonify({"error": str(e)}), 404
+    
 
 @bp.route("/paginado", methods=["POST"])
 @jwt_required()

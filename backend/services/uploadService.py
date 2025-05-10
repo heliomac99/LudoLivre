@@ -4,6 +4,7 @@ from models.jogo.jogoImagem import JogoImagem
 from models.jogo.jogo import Jogo
 from werkzeug.datastructures import FileStorage
 from flask import send_file
+import shutil
 
 class UploadService:
 
@@ -89,3 +90,29 @@ class UploadService:
         arquivo.save(caminho_novo)
 
         jogo.nomeArquivoWallpaper = nome_arquivo
+
+    def excluirImagens(self, jogoId: int):
+        pasta = os.path.join("arquivos", "jogo", str(jogoId))
+
+        imagens = JogoImagem.query.filter_by(jogoId=jogoId).all()
+        for imagem in imagens:
+            caminho = os.path.join(pasta, imagem.nomeArquivo)
+            if os.path.exists(caminho):
+                os.remove(caminho)
+            db.session.delete(imagem)
+
+        db.session.flush()  # Para garantir que as imagens sejam removidas do banco
+
+    def excluirWallpaper(self, jogoId: int):
+        pasta = os.path.join("arquivos", "jogo", str(jogoId))
+        jogo = db.session.get(Jogo, jogoId)
+        if jogo and jogo.nomeArquivoWallpaper:
+            caminho = os.path.join(pasta, jogo.nomeArquivoWallpaper)
+            if os.path.exists(caminho):
+                os.remove(caminho)
+
+    def excluirPastaJogo(self, jogoId: int):
+        pasta = os.path.join("arquivos", "jogo", str(jogoId))
+        if os.path.exists(pasta):
+            shutil.rmtree(pasta)
+

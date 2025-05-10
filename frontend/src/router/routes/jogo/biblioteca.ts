@@ -1,5 +1,6 @@
 import Biblioteca from '@/pages/jogo/Biblioteca.vue'
 import HomeLayout from '@/pages/Home.vue'
+import { EPermissao } from '@/helpers/Enums'
 
 export default [
   {
@@ -15,7 +16,8 @@ export default [
           requiresAuth: true,
           goesToMenu: true,
           label: 'Biblioteca',
-          menuGroup: 'Jogos' // 👈 nome do grupo
+          menuGroup: 'Jogos',
+          permissao: EPermissao.PreviewJogo
         }
       }
     ]

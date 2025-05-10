@@ -70,7 +70,7 @@ import { JogoModel } from '@/models/jogo/jogoModel'
 import ButtonLoading from '@/components/ButtonLoading.vue'
 import jogoService from '@/services/jogoService'
 import { useToast } from 'vue-toastification'
-import { base64ToFile, base64ArrayToFiles } from '@/utils'
+import { base64ToFile, base64ArrayToFiles } from '@/helpers/Utils'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 const toast = useToast()
@@ -120,8 +120,9 @@ export default defineComponent({
           toast.success('Jogo atualizado com sucesso.')
         } else {
           await jogoService.cadastrar(this.model)
-          toast.success('Jogo salvo com sucesso.')
+          toast.success('Jogo salvo com sucesso.')  
         }
+        this.$router.back();
       } catch (error: unknown) {
         if (typeof error === 'object' && error !== null && 'response' in error) {
           toast.error((error as any).response?.data?.error || 'Erro ao salvar')

@@ -2,6 +2,7 @@ import api from './api'
 import { LoginModel, RegistroModel, UpdateModel } from '../models/usuario/usuarioModel'
 import { useToast } from 'vue-toastification'
 import TextoValor from '@/helpers/TextoValor'
+import PermissaoComSelecao from '@/models/permissao/permissaoComSelecao'
 
 const toast = useToast()
 
@@ -29,6 +30,7 @@ class UsuarioService {
     const result = await api.get('/usuario/tipos')
     return result.data
   }
+
 }
 
 export default new UsuarioService()

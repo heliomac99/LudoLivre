@@ -7,7 +7,6 @@ from math import ceil
 class JogoRepository:
     def criar(self, data):
         jogo = Jogo(
-            nome=data.get('descricaoCurta', '')[:100],
             descricao=data.get('descricao'),
             descricaoCurta=data.get('descricaoCurta'),
             descricaoCompleta=data.get('descricaoCompleta'),
