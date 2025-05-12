@@ -5,19 +5,19 @@
     </div>
 
     <div class="card card-form shadow-sm border-0 p-5 w-100">
-      <button class="btn btn-primary d-flex justify-content-center align-items-center p-2" style="width: 100px; height: 40px;" @click="inserir">
-        <i class="bi bi-plus-lg"></i>
-      </button>
-
-
       <GameLibrary :key="key" :usuarioId="usuario?.id">
+        <template #header>
+          <button class="btn btn-primary d-flex justify-content-center align-items-center p-2" style="width: 100px; height: 40px;" @click="inserir">
+            <i class="bi bi-plus-lg"></i>
+          </button>
+        </template>
         <template #botao="{ jogo }">
           <div class="d-flex gap-2">
-            <button class="btn btn-success w-100" @click="editar(jogo)">
-              <i class="bi bi-pencil me-2"></i> Editar
-            </button>
-            <button class="btn btn-danger w-100" @click="deletar(jogo)">
+            <button class="btn btn-outline-danger w-100" @click="deletar(jogo)">
               <i class="bi bi-trash me-2"></i> Deletar
+            </button>
+              <button class="btn btn-success w-100" @click="editar(jogo)">
+              <i class="bi bi-pencil me-2"></i> Editar
             </button>
           </div>
         </template>

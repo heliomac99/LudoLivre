@@ -4,6 +4,8 @@ from services.uploadService import UploadService
 from main import db
 from helpers.dataSource import DataSource
 from models.jogo.jogo import Jogo
+from helpers.dataSource import Filter, FilterOperator
+from services.utilsService import FiltroService
 
 class JogoService:
     def __init__(self):
@@ -56,7 +58,9 @@ class JogoService:
         return self.repo.listar()
     
     def paginado(self, ds: DataSource):
-        return self.repo.paginado(ds)
+        paginated = self.repo.paginado(ds)
+        return paginated
     
-    def paginadoPorUsuario(self, ds: DataSource, usuarioId: int):
-        return self.repo.paginadoPorUsuario(ds, usuarioId)
+    def paginadoPorUsuario(self, usuarioId, ds: DataSource):
+        paginated = self.repo.paginadoPorUsuario(ds, usuarioId)
+        return paginated

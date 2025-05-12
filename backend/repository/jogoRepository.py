@@ -1,8 +1,8 @@
-# jogoRepository.py
 from models.jogo.jogo import Jogo
 from main import db
 from helpers.dataSource import DataSource
 from math import ceil
+from services.utilsService import FiltroService  # certifique-se de que o caminho esteja correto
 
 class JogoRepository:
     def criar(self, data):
@@ -13,6 +13,7 @@ class JogoRepository:
             usuarioId=data.get('usuarioId')
         )
         db.session.add(jogo)
+        db.session.flush()
         return jogo
 
     def atualizar(self, jogo_id, data):
@@ -34,22 +35,22 @@ class JogoRepository:
         return Jogo.query.all()
     
     def paginado(self, ds: DataSource):
-        paginated = Jogo.query.paginate(page=ds.currentPage, per_page=ds.pageSize, error_out=False)
+        query = FiltroService.criarQueryPaginadoFiltros(Jogo, ds)
+        paginated = query.paginate(page=ds.currentPage, per_page=ds.pageSize, error_out=False)
         return DataSource(
             itens=paginated.items,
             total=paginated.total,
             currentPage=ds.currentPage,
             pageSize=ds.pageSize,
             pageCount=ceil(paginated.total / ds.pageSize) if ds.pageSize else 1
-        )
-    
-    def paginadoPorUsuario(self, ds: DataSource, usuarioId: int):
-        paginated = (
-            Jogo.query
-            .filter_by(usuarioId=usuarioId)
-            .paginate(page=ds.currentPage, per_page=ds.pageSize, error_out=False)
         )
 
+    def paginadoPorUsuario(self, ds: DataSource, usuarioId: int):
+        query = FiltroService.criarQueryPaginadoFiltros(
+            Jogo, ds,
+            where=lambda q: q.filter(Jogo.usuarioId == usuarioId)
+        )
+        paginated = query.paginate(page=ds.currentPage, per_page=ds.pageSize, error_out=False)
         return DataSource(
             itens=paginated.items,
             total=paginated.total,
@@ -57,3 +58,4 @@ class JogoRepository:
             pageSize=ds.pageSize,
             pageCount=ceil(paginated.total / ds.pageSize) if ds.pageSize else 1
         )
+

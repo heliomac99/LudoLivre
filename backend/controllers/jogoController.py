@@ -85,31 +85,35 @@ def paginado():
 
     try:
         page = int(data.get("page", 1)) or 1
-        page_size = int(data.get("page_size", 10)) or 10
+        pageSize = int(data.get("pageSize", 10)) or 10
+        filters = data.get("filters", [])
     except ValueError:
         return jsonify({"error": "Parâmetros de paginação inválidos"}), 400
 
-    ds = DataSource.vazio(page, page_size)
-    jogos_page = service.paginado(ds)
+    ds = DataSource.vazio(page, pageSize, filters)
+    
+    jogoPages = service.paginado(ds)
 
-    return jsonify(jogos_page.to_dict(respostaSchema.dump))
+    return jsonify(jogoPages.toDict(respostaSchema.dump))
 
 
 @bp.route("/paginadoPorUsuario", methods=["POST"])
 @jwt_required()
-def paginado_por_usuario():
+def paginadoPorUsuario():
     data = request.get_json() or {}
 
     try:
         page = int(data.get("page", 1)) or 1
-        pageSize = int(data.get("page_size", 10)) or 10
+        pageSize = int(data.get("pageSize", 10)) or 10
         usuarioId = int(data.get("usuarioId"))
+        filters = data.get("filters", [])
     except (ValueError, TypeError):
         return jsonify({"error": "Parâmetros de paginação inválidos"}), 400
 
-    ds = DataSource.vazio(page, pageSize)
-    jogosPage = service.paginadoPorUsuario(ds, usuarioId)
+    ds = DataSource.vazio(page, pageSize, filters)
+    
+    jogoPages = service.paginadoPorUsuario(usuarioId, ds)
 
-    return jsonify(jogosPage.to_dict(respostaSchema.dump))
+    return jsonify(jogoPages.toDict(respostaSchema.dump))
 
 

@@ -41,7 +41,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import api from '@/services/api'
 import { useToast } from 'vue-toastification'
 import usuarioService from '@/services/usuarioService'
 import permissaoService from '@/services/permissaoService'

@@ -44,7 +44,7 @@ def create_app():
         permissoes = [
             (1, "Cadastro de jogo"),
             (2, "Preview de Jogo"),
-            (3, "Permissoes")
+            (3, "Permissões")
         ]
         for id_, desc in permissoes:
             if not ItemPermissao.query.get(id_):

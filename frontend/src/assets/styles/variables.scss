@@ -41,6 +41,10 @@ $primary-contrast: #ffffff;
   background: #666;
 }
 
+.btn-outline-primary:hover {
+  color: #fff !important;
+}
+
 /* Firefox */
 * {
   scrollbar-width: thin;

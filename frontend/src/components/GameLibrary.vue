@@ -1,8 +1,46 @@
 <template>
+  <transition name="slide-down">
+    <div v-if="mostrarFiltros" class="filtros-absoluto">
+      <div class="container py-3">
+        <div class="row g-3 align-items-end">
+          <div class="col-md-5">
+            <label class="form-label">Título</label>
+            <input v-model="filtros.descricaoCurta" class="form-control" @keyup.enter="aplicarFiltros" />
+          </div>
+          <div class="col-md-5">
+            <label class="form-label">Sub Título</label>
+            <input v-model="filtros.descricao" class="form-control" @keyup.enter="aplicarFiltros" />
+          </div>
+          <div class="col-12 text-end mt-3">
+            <button class="btn btn-outline-secondary" style="margin-right: 5px;" @click="mostrarFiltros=false">Fechar</button>
+            <button class="btn btn-primary" @click="aplicarFiltros">Filtrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </transition>
+
+
   <div v-if="screenLoading">
     <LoadingSpinner></LoadingSpinner>
   </div>
-  <div class="container py-4" v-else>
+  <div class="container py-4"
+      v-else
+      :style="{ marginTop: mostrarFiltros ? '80px' : '0' }"
+    >
+  
+    <div class="d-flex justify-content-between align-items-center mt-3 mb-4 px-4">
+      <div>
+        <slot name="header"></slot>
+      </div>
+      <div>
+        <button class="btn btn-outline-primary" title="filtros" @click="mostrarFiltros = !mostrarFiltros" v-if="!mostrarFiltros">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+    </div>
+
+
     <div class="row row-cols-1 row-cols-md-3 g-4">
       <div class="col" v-for="jogo in dataSource.itens" :key="jogo.id">
         <div class="card cardGame h-100 shadow-sm">
@@ -71,6 +109,8 @@ import CarrosselImagens from '@/components/Carrossel.vue'
 import { JogoModel } from '@/models/jogo/jogoModel'
 import { DataSource } from '@/helpers/DataSource'
 import LoadingSpinner from './LoadingSpinner.vue'
+import { FilterOperator } from '@/helpers/DataSource'
+
 
 export default defineComponent({
   name: 'GameLibrary',
@@ -84,13 +124,20 @@ export default defineComponent({
   },
   data() {
     return {
+      mostrarFiltros: false,
+      filtros: {
+        descricaoCurta: '',
+        descricao: '',
+        descricaoCompleta: ''
+      },
       screenLoading: false,
       dataSource: {
         itens: [],
         total: 0,
         currentPage: 1,
         pageCount: 0,
-        pageSize: 3
+        pageSize: 3,
+        filters: []
       } as DataSource<JogoModel>,
       jogoSelecionado: null as JogoModel | null
     }
@@ -99,14 +146,29 @@ export default defineComponent({
     this.buscarJogos()
   },
   methods: {
+    aplicarFiltros() {
+      this.dataSource.filters = []
+
+      if (this.filtros.descricaoCurta)
+        this.dataSource.filters.push({ field: 'descricaoCurta', operator: FilterOperator.CONTAINS, value: this.filtros.descricaoCurta })
+
+      if (this.filtros.descricao)
+        this.dataSource.filters.push({ field: 'descricao', operator: FilterOperator.CONTAINS, value: this.filtros.descricao })
+
+      if (this.filtros.descricaoCompleta)
+        this.dataSource.filters.push({ field: 'descricaoCompleta', operator: FilterOperator.CONTAINS, value: this.filtros.descricaoCompleta })
+
+      this.dataSource.currentPage = 1
+      this.buscarJogos()
+    },
     async buscarJogos() {
       this.screenLoading = true;
       try {
         let response;
         if (this.usuarioId != null) {
-          response = await jogoService.paginadoPorUsuario(this.usuarioId, this.dataSource.currentPage, this.dataSource.pageSize)
+          response = await jogoService.paginadoPorUsuario(this.usuarioId, this.dataSource)
         } else {
-          response = await jogoService.paginado(this.dataSource.currentPage, this.dataSource.pageSize)
+          response = await jogoService.paginado(this.dataSource)
         }
         this.dataSource = response;
       } catch (err) {
@@ -234,5 +296,29 @@ button.btn.btn-secondary:hover {
 .page-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.filtros-absoluto {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1050;
+}
+
+/* Transição */
+.slide-down-enter-active, .slide-down-leave-active {
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  overflow: hidden;
+}
+.slide-down-enter-from, .slide-down-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+.slide-down-enter-to, .slide-down-leave-from {
+  max-height: 600px;
+  opacity: 1;
 }
 </style>

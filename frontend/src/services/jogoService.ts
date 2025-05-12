@@ -52,21 +52,25 @@ class JogoService {
   }
 
 
-  async paginado(page: number, pageSize: number): Promise<DataSource<JogoModel>> {
+  async paginado(dataSource: DataSource<JogoModel>): Promise<DataSource<JogoModel>> {
     const response = await api.post<DataSource<JogoModel>>('/jogo/paginado', {
-      page,
-      page_size: pageSize
-    })
-    return response.data
+      page: dataSource.currentPage,
+      pageSize: dataSource.pageSize,
+      filters: dataSource.filters
+    });
+    
+    return response.data;
   }
 
-  async paginadoPorUsuario(usuarioId: number, page: number, pageSize: number): Promise<DataSource<JogoModel>> {
+  async paginadoPorUsuario(usuarioId: number, dataSource: DataSource<JogoModel>): Promise<DataSource<JogoModel>> {
     const response = await api.post<DataSource<JogoModel>>('/jogo/paginadoPorUsuario', {
       usuarioId,
-      page,
-      page_size: pageSize
-    })
-    return response.data
+      page: dataSource.currentPage,
+      pageSize: dataSource.pageSize,
+      filters: dataSource.filters
+    });
+    
+    return response.data;
   }
   
    async carregar(id: number): Promise<JogoModel> {
