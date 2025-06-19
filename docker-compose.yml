@@ -5,7 +5,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: LodoLivre
+      MYSQL_DATABASE: LudoLivre
     ports:
       - "3307:3306"
     volumes:
@@ -27,7 +27,7 @@ services:
       DB_USER: root
       DB_PASSWORD: root
       DB_HOST: mysql
-      DB_NAME: LodoLivre
+      DB_NAME: LudoLivre
       WAIT_FOR_DEBUGGER: false
     volumes:
       - ./backend:/app
