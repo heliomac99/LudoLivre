@@ -9,6 +9,7 @@ class JogoCadastroSchema(Schema):
     descricaoCompleta = fields.Str(required=True, validate=validate.Length(min=1))
     wallpaper = fields.Raw(required=False)
     usuarioId = fields.Int(required=True)
+    tags = fields.List(fields.Str(), required=False)
 
 class JogoRespostaSchema(Schema):
     id = fields.Int()
@@ -19,7 +20,11 @@ class JogoRespostaSchema(Schema):
     wallpaperBase64 = fields.Method("getWallpaperBase64")
     imagensBase64 = fields.Method("getImagensBase64")
     usuarioId = fields.Int()
+    tags = fields.Method("getTags")
 
+    def getTags(self, obj):
+        return [tag.nome for tag in obj.tags]
+    
     def getWallpaperBase64(self, obj):
         if obj.nomeArquivoWallpaper:
             try:

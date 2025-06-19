@@ -2,7 +2,9 @@ from models.jogo.jogo import Jogo
 from main import db
 from helpers.dataSource import DataSource
 from math import ceil
-from services.utilsService import FiltroService  # certifique-se de que o caminho esteja correto
+from services.utilsService import FiltroService  
+from models.jogo.tag import Tag
+from models.jogo.jogoTag import JogoTag
 
 class JogoRepository:
     def criar(self, data):
@@ -24,6 +26,29 @@ class JogoRepository:
         jogo.descricaoCurta = data.get('descricaoCurta', jogo.descricaoCurta)
         jogo.descricaoCompleta = data.get('descricaoCompleta', jogo.descricaoCompleta)
         return jogo
+    
+    def salvarTags(self, jogoId: int, tags: list[str]):
+        # Buscar tags existentes vinculadas ao jogo
+        tags_atual = db.session.query(JogoTag).filter_by(jogoId=jogoId).all()
+        tag_ids_novos = []
+        
+        # Obter ids das novas tags
+        for tag_nome in tags:
+            tag = db.session.query(Tag).filter_by(nome=tag_nome).first()
+            if tag:
+                tag_ids_novos.append(tag.id)
+        
+        # Remover vínculos que não estão na nova lista
+        for jt in tags_atual:
+            if jt.tagId not in tag_ids_novos:
+                db.session.delete(jt)
+        
+        # Adicionar novos vínculos
+        for tag_id in tag_ids_novos:
+            existe = db.session.query(JogoTag).filter_by(jogoId=jogoId, tagId=tag_id).first()
+            if not existe:
+                db.session.add(JogoTag(jogoId=jogoId, tagId=tag_id))
+
 
     def obterPorId(self, jogo_id):
         jogo = db.session.get(Jogo, jogo_id)

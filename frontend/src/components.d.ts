@@ -14,6 +14,7 @@ declare module 'vue' {
     LoadingSpinner: typeof import('./components/LoadingSpinner.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    TagCard: typeof import('./components/TagCard.vue')['default']
     UploadImagens: typeof import('./components/UploadImagens.vue')['default']
     Voltar: typeof import('./components/Voltar.vue')['default']
   }

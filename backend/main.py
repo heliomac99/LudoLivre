@@ -29,6 +29,8 @@ def create_app():
         from models.jogo.jogoImagem import JogoImagem
         from models.permissao.itemPermissao import ItemPermissao
         from models.permissao.tipoUsuarioItemPermissao import TipoUsuarioItemPermissao
+        from models.jogo.tag import Tag
+        from models.jogo.jogoTag import JogoTag
 
         db.create_all()
 
@@ -46,11 +48,24 @@ def create_app():
             (2, "Preview de Jogo"),
             (3, "Permissões")
         ]
+
         for id_, desc in permissoes:
             if not ItemPermissao.query.get(id_):
                 db.session.add(ItemPermissao(id=id_, descricao=desc))
 
-        db.session.commit()
+        tags_padrao = [
+            "Ação", "Aventura", "RPG", "Estratégia", "Simulação", 
+            "Puzzle", "Esportes", "Casuais",
+            "Experiência adaptável", "Jogável por todos", 
+            "Opções de acessibilidade", "Acessibilidade visual", 
+            "Acessibilidade auditiva", "Acessibilidade motora"
+        ]
+
+        for nome_tag in tags_padrao:
+            if not Tag.query.filter_by(nome=nome_tag).first():
+                db.session.add(Tag(nome=nome_tag))
+                
+        db.session.commit() 
 
         # Seeding TipoUsuarioItemPermissao para Administrador (id=1)
         admin = TipoUsuario.query.get(1)

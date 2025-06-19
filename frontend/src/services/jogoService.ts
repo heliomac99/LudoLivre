@@ -9,6 +9,8 @@ class JogoService {
     formData.append('descricaoCurta', model.descricaoCurta)
     formData.append('descricaoCompleta', model.descricaoCompleta)
 
+    formData.append('tags', JSON.stringify(model.tags || []))
+
     if (Array.isArray(model.imagens)) {
       model.imagens.forEach(img => {
         formData.append('imagens', img)
@@ -25,6 +27,11 @@ class JogoService {
       }
     })
   }
+
+  async listarTodasTags(): Promise<string[]> {
+    const response = await api.get<string[]>('/jogo/tags')
+    return response.data
+  }
   
   async atualizar(id: number, model: JogoModel): Promise<void> {
     const formData = new FormData()
@@ -32,6 +39,8 @@ class JogoService {
     formData.append('descricao', model.descricao)
     formData.append('descricaoCurta', model.descricaoCurta)
     formData.append('descricaoCompleta', model.descricaoCompleta)
+
+    formData.append('tags', JSON.stringify(model.tags || []))
 
     if (Array.isArray(model.imagens)) {
       model.imagens.forEach(img => {
@@ -48,7 +57,6 @@ class JogoService {
         'Content-Type': 'multipart/form-data'
       }
     })
-
   }
 
 

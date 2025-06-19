@@ -26,8 +26,6 @@
           </Field>
         </div>
 
-  
-
         <div class="mb-3">
           <label for="lore" class="form-label">Lore</label>
           <Field name="lore" v-slot="{ field, errorMessage }" v-model="model.descricaoCompleta">
@@ -47,6 +45,9 @@
           <label class="form-label">Imagens</label>
           <UploadImagens v-model:arquivos="model.imagens" />
         </div>
+
+        <TagCard v-model:tags="model.tags" />
+
 
         <ButtonLoading
           style="margin-top: 20px"
@@ -72,6 +73,7 @@ import jogoService from '@/services/jogoService'
 import { useToast } from 'vue-toastification'
 import { base64ToFile, base64ArrayToFiles } from '@/helpers/Utils'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
+import TagCard from '@/components/TagCard.vue'
 
 const toast = useToast()
 
@@ -82,7 +84,8 @@ export default defineComponent({
     Field,
     UploadImagens,
     ButtonLoading,
-    LoadingSpinner
+    LoadingSpinner,
+    TagCard
   },
   async mounted() {
     const id = this.$route.params.id

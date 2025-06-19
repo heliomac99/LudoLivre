@@ -17,3 +17,9 @@ class Jogo(db.Model):
         backref='jogo',
         cascade='all, delete-orphan'
     )
+
+    tags = db.relationship(
+        'Tag',
+        secondary='jogoTag',
+        backref='jogos'
+    )

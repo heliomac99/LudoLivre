@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required
 from schemas.jogoSchema import JogoCadastroSchema, JogoRespostaSchema
 from services.jogoService import JogoService
 from helpers.dataSource import DataSource
+import json
 
 
 bp = Blueprint("jogos", __name__, url_prefix="/jogo")
@@ -17,6 +18,17 @@ def cadastrarJogo():
     usuarioId = request.headers.get("X-Usuario-Id")
     data = request.form.to_dict()
     data["usuarioId"] = usuarioId
+
+    # Obter tags como lista (espera vir como JSON no form ou separadas por vírgula)
+    tags_raw = request.form.get("tags", "[]")
+    try:
+        tags = json.loads(tags_raw)
+        if not isinstance(tags, list) or not all(isinstance(t, str) for t in tags):
+            raise ValueError
+    except Exception:
+        return jsonify({"error": "Formato de tags inválido"}), 400
+
+    data["tags"] = tags
     errors = cadastroSchema.validate(data)
     if errors:
         return jsonify(errors), 400
@@ -31,10 +43,11 @@ def cadastrarJogo():
         return jsonify({"error": "Envie o wallpaper"}), 400
 
     try:
-        jogo = service.cadastrar(data, arquivos, wallpaper)
+        jogo = service.cadastrar(data, arquivos, wallpaper, tags)
         return jsonify(respostaSchema.dump(jogo)), 200
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
+
 
 
 @bp.route("/<int:jogoId>", methods=["PUT"])
@@ -44,11 +57,22 @@ def atualizarJogo(jogoId):
     data = request.form.to_dict()
     data["usuarioId"] = usuarioId
 
+    # Obter tags
+    tags_raw = request.form.get("tags", "[]")
+    try:
+        tags = json.loads(tags_raw)
+        if not isinstance(tags, list) or not all(isinstance(t, str) for t in tags):
+            raise ValueError
+    except Exception:
+        return jsonify({"error": "Formato de tags inválido"}), 400
+
+    data["tags"] = tags
+
     arquivos = request.files.getlist("imagens")
     wallpaper = request.files.get("wallpaper")
 
     try:
-        jogo = service.atualizar(jogoId, data, arquivos, wallpaper)
+        jogo = service.atualizar(jogoId, data, arquivos, wallpaper, tags)
         return jsonify({
             "msg": "Jogo atualizado com sucesso",
             "jogo": respostaSchema.dump(jogo)
@@ -57,6 +81,7 @@ def atualizarJogo(jogoId):
         return jsonify({"error": str(e)}), 404
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
+
 
 @bp.route("/<int:jogoId>", methods=["GET"])
 @jwt_required()
@@ -76,7 +101,13 @@ def deletarJogo(jogoId):
         return jsonify({"msg": "Jogo deletado com sucesso."}), 200
     except LookupError as e:
         return jsonify({"error": str(e)}), 404
-    
+
+
+@bp.route("/tags", methods=["GET"])
+@jwt_required()
+def listar_tags():
+    tags = service.listarTodasTags()
+    return jsonify([t for t in tags])
 
 @bp.route("/paginado", methods=["POST"])
 @jwt_required()
