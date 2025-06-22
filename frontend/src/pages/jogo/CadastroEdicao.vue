@@ -10,6 +10,14 @@
 
       <Form :validation-schema="schema" @submit="salvar" v-else>
 
+      <div class="mb-3">
+        <label for="url" class="form-label">Link</label>
+        <Field name="url" v-slot="{ field, errorMessage }" v-model="model.url">
+          <input id="url" type="text" class="form-control" v-bind="field" />
+          <small class="text-danger">{{ errorMessage }}</small>
+        </Field>
+      </div>
+
         <div class="mb-3">
           <label for="descricaoCurta" class="form-label">Descrição Curta</label>
           <Field name="descricaoCurta" v-slot="{ field, errorMessage }" v-model="model.descricaoCurta">
@@ -108,7 +116,8 @@ export default defineComponent({
       schema: yup.object({
         descricao: yup.string().required('A descrição é obrigatória'),
         descricaoCurta: yup.string().required('A descrição curta é obrigatória'),
-        lore: yup.string().required('A lore é obrigatória')
+        lore: yup.string().required('A lore é obrigatória'),
+        url: yup.string().required('O link é obrigatório')
       })
     }
   },

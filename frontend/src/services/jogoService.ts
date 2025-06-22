@@ -39,6 +39,7 @@ class JogoService {
     formData.append('descricao', model.descricao)
     formData.append('descricaoCurta', model.descricaoCurta)
     formData.append('descricaoCompleta', model.descricaoCompleta)
+    formData.append('url', model.url)
 
     formData.append('tags', JSON.stringify(model.tags || []))
 
