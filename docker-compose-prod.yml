@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: LudoLivre
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: backend
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mysql
+    environment:
+      FLASK_APP: main.py
+      PYTHONUNBUFFERED: 1
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_HOST: mysql
+      DB_NAME: LudoLivre
+    # não há volumes em prod para garantir imutabilidade
+    command: ["python", "entryPoint.py"]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://backend:5000}
+    container_name: frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    # o build já empacota tudo, sem volumes
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://backend:5000}
+
+volumes:
+  mysql_data:

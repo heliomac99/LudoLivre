@@ -45,7 +45,7 @@
                   class="nav-link sublink ps-4 d-flex align-items-center"
                   active-class="active"
                 >
-                  {{ route.meta?.label || route.name }}
+                  {{ (route.meta as any).label || route.name }}
                 </RouterLink>
               </li>
             </ul>
@@ -79,96 +79,78 @@
 
       <main class="p-4">
         <Voltar />
-        <LandingPage v-if="$route.path === '/home' || $route.path === '/home/'" />
+        <LandingPage v-if="route.path === '/home' || route.path === '/home/'" />
         <router-view />
       </main>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, watch, onMounted } from 'vue'
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from 'vue'
+import { useRouter, useRoute, RouteRecordRaw } from 'vue-router'
 import { useUsuarioStore } from '@/stores/usuario'
-import { useRouter } from 'vue-router'
 import logo from '@/assets/logoLudoLivre.png'
-import type { RouteRecordRaw } from 'vue-router'
-import ButtonLoading from '../components/ButtonLoading.vue'
+import ButtonLoading from '@/components/ButtonLoading.vue'
 import Voltar from '@/components/Voltar.vue'
 import LandingPage from '@/components/LandingPage.vue'
 
-export default defineComponent({
-  components: { ButtonLoading, Voltar, LandingPage },
-  data() {
-    return {
-      isLoadingLogout: false,
-      menuVisiveis: {} as Record<string, boolean>,
-      usuarioStore: useUsuarioStore(),
-      router: useRouter(),
-      logo,
-      iconMap: {
-        Usuário: 'bi-people',
-        Jogos: 'bi-controller',
-        Configurações: 'bi-gear'
+// Stores e roteamento
+const usuarioStore = useUsuarioStore()
+const router = useRouter()
+const route = useRoute()
+
+// Estados reativos
+const isLoadingLogout = ref(false)
+const menuVisiveis = ref<Record<string, boolean>>({})
+
+// Mapa de ícones (pode ter qualquer grupo dinâmico)
+const iconMap: Record<string, string> = {
+  Usuário: 'bi-people',
+  Jogos: 'bi-controller',
+  Configurações: 'bi-gear'
+}
+
+// Computed para agrupar rotas no menu
+const menuGroups = computed<Record<string, RouteRecordRaw[]>>(() => {
+  const grouped: Record<string, RouteRecordRaw[]> = {}
+  const permissoes = usuarioStore.permissoes
+
+  router.getRoutes().forEach(r => {
+    const meta = r.meta as Record<string, any>
+    if (meta.goesToMenu && meta.menuGroup) {
+      const need = meta.permissao
+      if (need === undefined || permissoes.includes(need)) {
+        grouped[meta.menuGroup] = grouped[meta.menuGroup] || []
+        grouped[meta.menuGroup].push(r)
       }
     }
-  },
-  computed: {
-    usuario() {
-      return this.usuarioStore.usuario
-    },
-    menuGroups(): Record<string, RouteRecordRaw[]> {
-      const grouped: Record<string, RouteRecordRaw[]> = {}
-      const permissoes = this.usuarioStore.permissoes
+  })
 
-      this.$router.getRoutes().forEach(route => {
-        const meta = route.meta || {}
-        const permissaoNecessaria = meta.permissao
-
-        if (meta.goesToMenu && meta.menuGroup) {
-          if (
-            permissaoNecessaria === undefined ||
-            permissoes.includes(permissaoNecessaria)
-          ) {
-            if (!grouped[meta.menuGroup]) grouped[meta.menuGroup] = []
-            grouped[meta.menuGroup].push(route)
-          }
-        }
-      })
-
-      return grouped
-    }
-  },
-  methods: {
-    async logout() {
-      this.isLoadingLogout = true
-      try {
-        await new Promise(resolve => setTimeout(resolve, 800))
-        this.usuarioStore.limparUsuario()
-        this.$router.push('/login')
-      } finally {
-        this.isLoadingLogout = false
-      }
-    },
-    toggleGroup(group: string) {
-      this.menuVisiveis[group] = !this.menuVisiveis[group]
-      localStorage.setItem('menuVisiveis', JSON.stringify(this.menuVisiveis))
-    }
-  },
-  watch: {
-    menuVisiveis: {
-      handler(newVal) {
-        localStorage.setItem('menuVisiveis', JSON.stringify(newVal))
-      },
-      deep: true
-    }
-  },
-  mounted() {
-    const savedState = localStorage.getItem('menuVisiveis')
-    if (savedState) {
-      this.menuVisiveis = JSON.parse(savedState)
-    }
-  }
+  return grouped
 })
+
+// Métodos
+function logout() {
+  isLoadingLogout.value = true
+  setTimeout(() => {
+    usuarioStore.limparUsuario()
+    router.push('/login')
+    isLoadingLogout.value = false
+  }, 800)
+}
+function toggleGroup(group: string) {
+  menuVisiveis.value[group] = !menuVisiveis.value[group]
+}
+
+// Persistência do estado de menu
+onMounted(() => {
+  const saved = localStorage.getItem('menuVisiveis')
+  if (saved) menuVisiveis.value = JSON.parse(saved)
+})
+watch(menuVisiveis, v => {
+  localStorage.setItem('menuVisiveis', JSON.stringify(v))
+}, { deep: true })
 </script>
 
 <style lang="scss" scoped>
