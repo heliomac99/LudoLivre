@@ -16,7 +16,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile.dev
       args:
-        - API_URL=${API_URL:http://localhost:5000}
+        - API_URL=${API_URL:-http://localhost:5000}
     container_name: backend
     ports:
       - "5000:5000"
