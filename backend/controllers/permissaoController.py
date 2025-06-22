@@ -39,7 +39,6 @@ def salvar():
     
 
 @bp.route("/porUsuario", methods=["GET"])
-@jwt_required()
 def permissoesPorUsuario():
     try:
         usuarioId = request.headers.get("X-Usuario-Id")
