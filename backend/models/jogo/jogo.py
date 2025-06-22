@@ -9,6 +9,7 @@ class Jogo(db.Model):
     descricaoCurta = db.Column(db.String(255), nullable=True)
     descricaoCompleta = db.Column(db.Text, nullable=True)
     nomeArquivoWallpaper = db.Column(db.String(255), nullable=True)
+    url = db.Column(db.String(500), nullable=True)
 
     usuarioId = db.Column(db.Integer, db.ForeignKey('usuario.id', ondelete='CASCADE'), nullable=False)
 
