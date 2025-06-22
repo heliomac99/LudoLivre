@@ -44,6 +44,7 @@
           width="100%"
           height="600"
           frameborder="0"
+          allow="camera; microphone; fullscreen; autoplay"
           allowfullscreen
         ></iframe>
         <button class="btn btn-secondary mt-3 w-100" @click="fecharJogo">Fechar</button>

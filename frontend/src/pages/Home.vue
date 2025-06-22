@@ -79,6 +79,7 @@
 
       <main class="p-4">
         <Voltar />
+        <LandingPage v-if="$route.path === '/home'" />
         <router-view />
       </main>
     </div>
@@ -93,9 +94,10 @@ import logo from '@/assets/logoLudoLivre.png'
 import type { RouteRecordRaw } from 'vue-router'
 import ButtonLoading from '../components/ButtonLoading.vue'
 import Voltar from '@/components/Voltar.vue'
+import LandingPage from '@/components/LandingPage.vue'
 
 export default defineComponent({
-  components: { ButtonLoading, Voltar },
+  components: { ButtonLoading, Voltar, LandingPage },
   data() {
     return {
       isLoadingLogout: false,
