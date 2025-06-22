@@ -79,7 +79,7 @@
 
       <main class="p-4">
         <Voltar />
-        <LandingPage v-if="$route.path === '/home'" />
+        <LandingPage v-if="$route.path === '/home' || $route.path === '/home/'" />
         <router-view />
       </main>
     </div>
