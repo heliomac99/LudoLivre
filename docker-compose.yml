@@ -15,8 +15,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
-      args:
-        - API_URL=${API_URL:-http://localhost:5000}
     container_name: backend
     ports:
       - "5000:5000"
@@ -40,9 +38,13 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
+      args:
+        - VITE_API_URL=${VITE_API_URL:-http://localhost:5000}
     container_name: frontend
     ports:
       - "3000:3000"
+    environment:
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:5000}
     volumes:
       - ./frontend:/app
       - /app/node_modules
