@@ -11,7 +11,6 @@ declare module 'vue' {
     Carrossel: typeof import('./components/Carrossel.vue')['default']
     ConfirmModal: typeof import('./components/ConfirmModal.vue')['default']
     GameLibrary: typeof import('./components/GameLibrary.vue')['default']
-    Landing: typeof import('./components/Landing.vue')['default']
     LandingPage: typeof import('./components/LandingPage.vue')['default']
     LoadingSpinner: typeof import('./components/LoadingSpinner.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
