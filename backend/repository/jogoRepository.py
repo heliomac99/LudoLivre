@@ -25,6 +25,7 @@ class JogoRepository:
         jogo.descricao = data.get('descricao', jogo.descricao)
         jogo.descricaoCurta = data.get('descricaoCurta', jogo.descricaoCurta)
         jogo.descricaoCompleta = data.get('descricaoCompleta', jogo.descricaoCompleta)
+        jogo.url = data.get('url', jogo.url)
         return jogo
     
     def salvarTags(self, jogoId: int, tags: list[str]):

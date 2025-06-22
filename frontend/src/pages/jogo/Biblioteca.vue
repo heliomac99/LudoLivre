@@ -5,27 +5,48 @@
     <div class="card card-form shadow-sm border-0 p-5 w-100">
       <GameLibrary>
         <template #botao="{ jogo }">
-          <button class="btn btn-primary w-100" @click="abrirModal(jogo)">
-            <i class="bi bi-eye me-2"></i> Ver mais
-          </button>
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-primary w-100" @click="abrirDetalhes(jogo)">
+              <i class="bi bi-eye me-2"></i> Ver Mais
+            </button>
+            <button class="btn btn-success w-100" @click="abrirJogo(jogo)">
+              <i class="bi bi-controller me-2"></i> Jogar
+            </button>
+          </div>
         </template>
       </GameLibrary>
     </div>
 
-    <!-- Modal controlado pelo componente pai -->
-    <div v-if="jogoSelecionado" class="modal-backdrop" @click.self="fechar">
+    <!-- Modal de detalhes -->
+    <div v-if="detailsOpened" class="modal-backdrop" @click.self="fecharDetalhes">
       <div class="modal-content">
         <div class="modal-header-custom">
-          <h2 class="titulo-branco">{{ jogoSelecionado.descricaoCurta }}</h2>
+          <h2 class="titulo-branco">{{ jogoSelecionado?.descricaoCurta }}</h2>
         </div>
         <div class="texto-container">
-          <h6 class="subtitulo">{{ jogoSelecionado.descricao }}</h6>
+          <h6 class="subtitulo">{{ jogoSelecionado?.descricao }}</h6>
           <hr class="lore-divider" />
-          <p class="lore">{{ jogoSelecionado.descricaoCompleta }}</p>
+          <p class="lore">{{ jogoSelecionado?.descricaoCompleta }}</p>
           <hr class="lore-divider" />
         </div>
-        <CarrosselImagens :imagens="jogoSelecionado.imagensBase64" />
-        <button class="btn btn-secondary mt-3 w-100" @click="fechar">Fechar</button>
+        <CarrosselImagens :imagens="jogoSelecionado?.imagensBase64" />
+
+        <button class="btn btn-secondary mt-3 w-100" @click="fecharDetalhes">Fechar</button>
+      </div>
+    </div>
+
+    <!-- Modal de jogo -->
+    <div v-if="jogoOpened" class="modal-backdrop" @click.self="fecharJogo">
+      <div class="modal-content modal-content-jogo">
+        <iframe
+          v-if="jogoSelecionado?.url"
+          :src="jogoSelecionado.url"
+          width="100%"
+          height="600"
+          frameborder="0"
+          allowfullscreen
+        ></iframe>
+        <button class="btn btn-secondary mt-3 w-100" @click="fecharJogo">Fechar</button>
       </div>
     </div>
   </div>
@@ -45,14 +66,26 @@ export default defineComponent({
   },
   data() {
     return {
-      jogoSelecionado: null as JogoModel | null
+      jogoSelecionado: null as JogoModel | null,
+      detailsOpened: false,
+      jogoOpened: false
     }
   },
   methods: {
-    abrirModal(jogo: JogoModel) {
+    abrirDetalhes(jogo: JogoModel) {
       this.jogoSelecionado = jogo
+      this.detailsOpened = true
     },
-    fechar() {
+    abrirJogo(jogo: JogoModel) {
+      this.jogoSelecionado = jogo
+      this.jogoOpened = true
+    },
+    fecharDetalhes() {
+      this.detailsOpened = false
+      this.jogoSelecionado = null
+    },
+    fecharJogo() {
+      this.jogoOpened = false
       this.jogoSelecionado = null
     }
   }
@@ -86,6 +119,10 @@ export default defineComponent({
   color: #f0f0f0;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
   animation: fadeIn 0.3s ease;
+}
+
+.modal-content-jogo {
+  padding: 0;
 }
 
 button.btn.btn-secondary {
