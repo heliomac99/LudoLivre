@@ -26,8 +26,9 @@ while True:
         conn.close()
         print("✅ Conexão com MySQL estabelecida.")
         break
-    except pymysql.err.OperationalError:
-        print("⏳ MySQL não disponível ainda. Tentando novamente em 1s...")
+    except pymysql.err.OperationalError as e:
+        print("⏳ MySQL não disponível ainda. Tentando novamente em 1s... "+str(host)+":"+str(port))
+        print(e)
         time.sleep(1)
 
 # Inicia o debug remoto (se necessário)

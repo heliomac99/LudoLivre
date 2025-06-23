@@ -1,0 +1,16 @@
+FROM python:3.13.2-alpine3.21
+
+WORKDIR /app
+
+RUN apk add --no-cache bash coreutils
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+RUN pip install debugpy
+
+COPY . .
+
+ENV PYTHONUNBUFFERED=1
+
+CMD ["python", "entryPoint.py"]
