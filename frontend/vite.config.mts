@@ -63,6 +63,6 @@ export default defineConfig({
       usePolling: true,
       interval: 100,
     },
-    allowedHosts: ['localhost', '127.0.0.1', '0.0.0.0', 'joao-depollo.com.br'],
+    allowedHosts: ['localhost', '127.0.0.1', '0.0.0.0', 'joao-depollo.com.br', 'www.joao-depollo.com.br'],
   },
 })
